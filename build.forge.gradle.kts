@@ -40,6 +40,13 @@ repositories {
 legacyForge {
     version = property("deps.forge") as String
     validateAccessTransformers = true
+    if(sc.current.parsed < "1.20") {
+        // why is it all different places..... ;(
+        if(sc.current.parsed > "1.18.2")
+            setAccessTransformers(file("build/resources/main/META-INF/accesstransformer.cfg"))
+        else
+            setAccessTransformers(file("build/generated/stonecutter/main/resources/META-INF/accesstransformer.cfg"))
+    }
 
     if (hasProperty("deps.parchment")) parchment {
         val (mc, ver) = (property("deps.parchment") as String).split(':')
@@ -65,7 +72,6 @@ legacyForge {
     }
     sourceSets["main"].resources.srcDir("src/main/generated")
 }
-
 
 dependencies {
     modCompileOnly("io.github.llamalad7:mixinextras-common:0.5.5")
@@ -120,6 +126,7 @@ val requiredJava = when {
 
 tasks {
     processResources {
+        dependsOn("createMinecraftArtifacts")
         exclude("**/fabric.mod.json", "**/*.accesswidener", "**/neoforge.mods.toml")
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"

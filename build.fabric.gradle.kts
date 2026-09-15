@@ -100,7 +100,7 @@ tasks {
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
 
-        exclude("META-INF/neoforge.mods.toml", "META-INF/mods.toml", "pack.mcmeta")
+        exclude("META-INF/neoforge.mods.toml", "META-INF/mods.toml", "pack.mcmeta", "accesstransformer.cfg")
     }
 
     // Includes the license file in the built mod

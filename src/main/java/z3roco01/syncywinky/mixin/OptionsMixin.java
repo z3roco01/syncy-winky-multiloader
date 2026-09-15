@@ -46,15 +46,15 @@ public abstract class OptionsMixin {
     // backport old settings so they wont get overwritten
     // all added after 1.18
     //? if <=1.18.2 {
-    /*@Unique
+    @Unique
     private static double darknessEffectScale;
     @Unique
     private static boolean directionalAudio;
-    *///?}
+    //?}
     //? if <=1.19.2 {
-    /*@Unique
+    @Unique
     private static boolean narratorHotkey;
-    *///?}
+    //?}
     //? if <=1.21.1 {
     @Unique
     private static String musicFrequency;
@@ -98,12 +98,12 @@ public abstract class OptionsMixin {
         }
 
         //? if <=1.18.2 {
-        /*directionalAudio = false;
+        directionalAudio = false;
         darknessEffectScale = 1.0;
-        *///?}
+        //?}
         //? if <=1.19.2 {
-        /*narratorHotkey = true;
-         *///?}
+        narratorHotkey = true;
+         //?}
         //? if <=1.21.1 {
         musicFrequency = "DEFAULT";
         musicToast = "never";
@@ -131,10 +131,10 @@ public abstract class OptionsMixin {
     //?}
 
     //? if <=1.21.1 && (neoforge || forge) && > 1.18.2 {
-    @Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    //? } else {
-    /*@Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    *///? }
+    /*@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    *///? } else {
+    @Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    //? }
     private File loadGetOptionsFile(Options options) {
         return globalOptionsFile;
     }
@@ -160,12 +160,12 @@ public abstract class OptionsMixin {
     @Inject(method = "processOptions", at = @At("TAIL"))
     private void processOptions(Options.FieldAccess fieldAccess, CallbackInfo ci) {
         //? if <=1.18.2 {
-        /*directionalAudio = fieldAccess.process("directionalAudio", directionalAudio);
+        directionalAudio = fieldAccess.process("directionalAudio", directionalAudio);
         darknessEffectScale = fieldAccess.process("darknessEffectScale", (float)darknessEffectScale);
-        *///?}
+        //?}
         //? if <=1.19.2 {
-        /*narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);
-         *///?}
+        narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);
+         //?}
         //? if <=1.21.1 {
         musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
         musicToast = fieldAccess.process("musicToast", musicToast);
@@ -186,12 +186,12 @@ public abstract class OptionsMixin {
 
     // dont modify the resourcepack list from the file, creates new list of actually applied packs
     //? if >=1.20.1 {
-    @Inject(method = "updateResourcePacks", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "updateResourcePacks", at = @At("HEAD"), cancellable = true)
     private void updateResourcePacks(PackRepository packRepository, CallbackInfo ci) {
         ResourcePackUtil.updateResourcePacks(packRepository, (Options)(Object)this, this.minecraft);
         ci.cancel();
     }
-    //?}
+    *///?}
 
     // have it apply packs from the proper list, instead of file list
     @ModifyVariable(method = "loadSelectedResourcePacks", at = @At("STORE"))
