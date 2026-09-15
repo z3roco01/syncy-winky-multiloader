@@ -1,0 +1,3 @@
+tiny	2	0	official
+c	net/minecraft/world/level/block/WeatheringCopper
+	c	@see net.fabricmc.fabric.api.registry.OxidizableBlocksRegistry registry for modded oxidizable blocks

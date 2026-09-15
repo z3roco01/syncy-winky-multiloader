@@ -1,0 +1,63 @@
+{
+  "project": "26.2-fabric",
+  "version": "26.2",
+  "active": true,
+  "branch": {
+    "id": "",
+    "path": "/home/wetcats/code/syncy-winky-multiloader"
+  },
+  "root": "/home/wetcats/code/syncy-winky-multiloader",
+  "parameters": {
+    "constants": {
+      "fabric": true,
+      "neoforge": false,
+      "forge": false,
+      "release": true
+    },
+    "swaps": {
+      "mod_version": "\"1.3.0\";",
+      "minecraft": "\"26.2\";"
+    },
+    "dependencies": {
+      "": {
+        "type": "dev.kikugie.semver.data.SemanticVersion",
+        "components": [
+          26,
+          2
+        ]
+      },
+      "minecraft": {
+        "type": "dev.kikugie.semver.data.SemanticVersion",
+        "components": [
+          26,
+          2
+        ]
+      },
+      "fapi": {
+        "type": "dev.kikugie.semver.data.SemanticVersion",
+        "components": [
+          0,
+          160,
+          0
+        ],
+        "build_metadata": "26.2"
+      }
+    },
+    "replacements": [
+      {
+        "type": "dev.kikugie.stitcher.replacement.StringReplacement",
+        "target": "Identifier",
+        "sources": [
+          "ResourceLocation"
+        ]
+      },
+      {
+        "type": "dev.kikugie.stitcher.replacement.StringReplacement",
+        "target": "classTweaker v2 official",
+        "sources": [
+          "classTweaker v2 named"
+        ]
+      }
+    ]
+  }
+}

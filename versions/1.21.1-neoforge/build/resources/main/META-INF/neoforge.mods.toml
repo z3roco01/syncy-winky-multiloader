@@ -1,0 +1,25 @@
+license = "GPL-v3"
+
+modLoader="javafml"
+loaderVersion="[1,)"
+
+[[mods]]
+modId = "syncywinky"
+displayName = "Syncy Winky"
+version = "1.3.0"
+authors = "z3roco01"
+description = "Syncs your game settings across all instacnes !"
+
+logoFile = "assets/syncywinky/icon.png"
+#displayURL = "..."
+#issueTrackerUrl = "..."
+
+[[mixins]]
+config = "syncywinky.mixins.json"
+
+[[dependencies.syncywinky]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21, 1.21.11]"
+ordering = "NONE"
+side = "BOTH"

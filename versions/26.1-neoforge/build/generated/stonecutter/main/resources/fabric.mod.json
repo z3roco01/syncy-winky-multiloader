@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Sync your game settings across all instances!",
+  "authors": [
+    "z3roco01"
+  ],
+  "contact": {
+    "sources": ""
+  },
+  "license": "GPL-v3",
+  "icon": "assets/syncywinky/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "z3roco01.syncywinky.SyncyWinkyFabric"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "syncywinky.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "syncywinky.ct",
+  "depends": {
+    "fabricloader": ">=0.17",
+    "minecraft": "${minecraft}"
+  }
+}

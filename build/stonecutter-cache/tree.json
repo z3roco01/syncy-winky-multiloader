@@ -1,0 +1,45 @@
+{
+  "stonecutter": "0.9.8",
+  "vcs": "26.2-fabric",
+  "current": "26.2-fabric",
+  "branches": [
+    {
+      "id": "",
+      "path": "/home/wetcats/code/syncy-winky-multiloader"
+    }
+  ],
+  "nodes": [
+    {
+      "project": "1.21.1-fabric",
+      "version": "1.21.1",
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/1.21.1-fabric"
+    },
+    {
+      "project": "1.21.1-neoforge",
+      "version": "1.21.1",
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/1.21.1-neoforge"
+    },
+    {
+      "project": "26.1-fabric",
+      "version": "26.1",
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/26.1-fabric"
+    },
+    {
+      "project": "26.1-neoforge",
+      "version": "26.1",
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/26.1-neoforge"
+    },
+    {
+      "project": "26.2-fabric",
+      "version": "26.2",
+      "active": true,
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/26.2-fabric"
+    },
+    {
+      "project": "26.2-neoforge",
+      "version": "26.2",
+      "path": "/home/wetcats/code/syncy-winky-multiloader/versions/26.2-neoforge"
+    }
+  ],
+  "flags": {}
+}

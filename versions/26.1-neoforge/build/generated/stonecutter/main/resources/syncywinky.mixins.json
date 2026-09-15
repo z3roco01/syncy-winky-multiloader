@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "z3roco01.syncywinky.mixin",
+  "compatibilityLevel": "${java}",
+  "client": [
+
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
