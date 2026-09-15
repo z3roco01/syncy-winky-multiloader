@@ -1,8 +1,6 @@
 plugins {
-    id("net.neoforged.moddev.legacyforge")
-    id("dev.kikugie.postprocess.jsonlang")
-    id("me.modmuss50.mod-publish-plugin")
-    id("maven-publish")
+    id("net.neoforged.moddev.legacyforge") version "2.0.147"
+    id("dev.kikugie.postprocess.jsonlang") version "2.1-beta.8"
 }
 
 val minecraft = stonecutter.current.version
@@ -22,7 +20,7 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}-forge"
-base.archivesName = property("mod.id") as String
+base.archivesName = "${property("mod.id") as String}-forge"
 
 jsonlang {
     languageDirectories = listOf("assets/${property("mod.id")}/lang")
@@ -32,20 +30,6 @@ jsonlang {
 
 repositories {
     mavenLocal()
-    maven {
-        name = "Modrinth"
-        url = uri("https://api.modrinth.com/maven")
-        content {
-            includeGroupAndSubgroups("maven.modrinth")
-        }
-    }
-    maven {
-        name = "Parchment Mappings"
-        url = uri("https://maven.parchmentmc.org")
-        content {
-            includeGroupAndSubgroups("org.parchmentmc")
-        }
-    }
     repositories {
         exclusiveContent {
             forRepository {
@@ -58,7 +42,6 @@ repositories {
             }
         }
     }
-    flatDir { dirs("libs") }
 }
 
 legacyForge {
@@ -92,9 +75,6 @@ legacyForge {
 
 
 dependencies {
-    modImplementation("cc.cassian.mru:mru-forge:${mod.dep("mru")}+${property("deps.minecraft")}")
-    jarJar("cc.cassian.mru:mru-forge:${mod.dep("mru")}+${property("deps.minecraft")}")
-
     modCompileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
     implementation("io.github.llamalad7:mixinextras-forge:0.5.0")
     jarJar("io.github.llamalad7:mixinextras-forge:0.5.0")
@@ -157,7 +137,13 @@ tasks {
 
 java {
     withSourcesJar()
-    val javaCompat = JavaVersion.VERSION_17
+    val javaCompat = when {
+    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
+    sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
+    else -> JavaVersion.VERSION_1_8
+}
     sourceCompatibility = javaCompat
     targetCompatibility = javaCompat
 }
@@ -168,45 +154,3 @@ val additionalVersions: List<String> = additionalVersionsStr
     ?.map { it.trim() }
     ?.filter { it.isNotEmpty() }
     ?: emptyList()
-
-publishMods {
-    file = (tasks.named<org.gradle.jvm.tasks.Jar>("reobfJar").map { it.archiveFile.get() })
-    additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
-
-    type = BETA
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version} Forge"
-    version = "${property("mod.version")}+${property("deps.minecraft")}-forge"
-    changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
-    modLoaders.add("forge")
-
-    modrinth {
-        projectId = property("publish.modrinth") as String
-        accessToken = env.MODRINTH_API_KEY.orNull()
-        minecraftVersions.add(stonecutter.current.version)
-        minecraftVersions.addAll(additionalVersions)
-        embeds("mru")
-        optional("cloth-config")
-    }
-
-    curseforge {
-        projectId = property("publish.curseforge") as String
-        accessToken = env.CURSEFORGE_API_KEY.orNull()
-        minecraftVersions.add(stonecutter.current.version)
-        minecraftVersions.addAll(additionalVersions)
-        embeds("mru")
-        client = true
-        server = false
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "cc.cassian.immersiveoverlays"
-            artifactId = "immersiveoverlays-forge"
-            version = "${property("mod.version")}+${property("deps.minecraft")}"
-
-            from(components["java"])
-        }
-    }
-}

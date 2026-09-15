@@ -28,6 +28,11 @@ mod.mc_releases = ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.
 mod.mc_compat = ">=1.20 <=1.20.6"
 deps.fabric_api = "0.92.12+1.20.1"
 
+[forge."1.20.1"]
+mod.mc_compat = "[1.20, 1.20.6]"
+deps.forge = "1.20.1-47.4.10"
+deps.minecraft = "1.20.1"
+
 ["1.21.1"]
 # List of releases to be marked compatible on Modrinth/Curseforge
 mod.mc_releases = ["1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11"]

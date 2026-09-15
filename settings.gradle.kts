@@ -6,6 +6,7 @@ pluginManagement {
         maven("https://maven.neoforged.net/releases/") { name = "NeoForged" }
         maven("https://maven.kikugie.dev/releases") { name = "KikuGie Releases" }
         maven("https://maven.kikugie.dev/snapshots") { name = "KikuGie Snapshots" }
+        maven("https://maven.parchmentmc.org") { name = "ParchmentMC" }
     }
 }
 
@@ -40,7 +41,7 @@ stonecutter {
         // See https://stonecutter.kikugie.dev/wiki/start/#choosing-minecraft-versions
         match("1.18.2", "fabric")
         match("1.19.2", "fabric")
-        match("1.20.1", "fabric")
+        match("1.20.1", "fabric", "forge")
         match("1.21.1", "fabric", "neoforge")
         match("26.1", "fabric", "neoforge")
         match("26.2", "fabric", "neoforge")
