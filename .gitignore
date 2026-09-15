@@ -41,3 +41,6 @@ replay_*.log
 *.log.gz
 */build/
 versions/
+buildSrc/.gradle/
+buildSrc/.kotlin/
+buildSrc/build/
