@@ -1,10 +1,9 @@
-package z3roco01.syncywinky.loader.forge;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import z3roco01.syncywinky.loader.SyncyWinkyCommon;
+package z3roco01.syncywinky.loader;
 
 //? if forge {
+/*import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+
 @Mod(SyncyWinkyCommon.MOD_ID)
 public class SyncyWinkyForge {
     public SyncyWinkyForge() {
@@ -13,4 +12,4 @@ public class SyncyWinkyForge {
         }
     }
 }
-//? }
+*///? }
