@@ -1,4 +1,183 @@
 package z3roco01.syncywinky.mixin;
 
-public class OptionsMixin {
+import com.google.common.collect.ImmutableList;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+//? if >=1.19.2 {
+//?}
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackRepository;
+import org.apache.commons.compress.utils.Lists;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import z3roco01.syncywinky.ResourcePackUtil;
+import z3roco01.syncywinky.SyncyWinkyCommon;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+@Mixin(Options.class)
+public abstract class OptionsMixin {
+    @Shadow
+    @Final
+    private File optionsFile;
+
+    @Shadow
+    public List<String> resourcePacks;
+    @Shadow
+    public List<String> incompatibleResourcePacks;
+    @Shadow
+    protected Minecraft minecraft;
+
+    @Shadow
+    public abstract void save();
+
+    @Unique
+    private static File globalOptionsFile;
+    // backport old settings so they wont get overwritten
+    // all added after 1.18
+    //? if <=1.18.2 {
+    /*@Unique
+    private static double darknessEffectScale;
+    @Unique
+    private static boolean directionalAudio;
+    *///?}
+    //? if <=1.19.2 {
+    /*@Unique
+    private static boolean narratorHotkey;
+    *///?}
+    //? if <=1.21.1 {
+    /*@Unique
+    private static String musicFrequency;
+    @Unique
+    private static String musicToast;
+    *///?}
+    //? if <=26.1.2 {
+    /*@Unique
+    private static String preferredGraphicsBackend;
+    @Unique
+    private static String keyFriends;
+    @Unique
+    private static String sharePresence;
+    @Unique
+    private static boolean inGameNotification;
+    *///?}
+
+    @Unique
+    private static PackRepository packRepository = null;
+
+    @Inject(method = "<init>", at = @At("HEAD"))
+    private static void init(Minecraft minecraft, File workingDirectory, CallbackInfo ci) {
+        globalOptionsFile = new File(System.getProperty("user.home") + "/.config/syncy-winky/options.txt");
+        // just need to create global config directory if it does not exist
+        if(!globalOptionsFile.getParentFile().exists()) {
+            // create all parent directories
+            if(!globalOptionsFile.getParentFile().mkdirs()) {
+                throw new RuntimeException("Could not create configuration directory \"" + globalOptionsFile.getParentFile().toString() + "\" for Syncy Winky !!!");
+            }
+            SyncyWinkyCommon.LOGGER.info("Created directory for config with path: " + globalOptionsFile.getParentFile().toString());
+        }
+
+        //? if <=1.18.2 {
+        /*directionalAudio = false;
+        darknessEffectScale = 1.0;
+        *///?}
+        //? if <=1.19.2 {
+        /*narratorHotkey = true;
+         *///?}
+        //? if <=1.21.1 {
+        /*musicFrequency = "DEFAULT";
+        musicToast = "never";
+        *///?}
+        //? if <=26.1.2 {
+        /*preferredGraphicsBackend = "default";
+        keyFriends = "key.keyboard.o";
+        sharePresence = "all";
+        inGameNotification = false;
+        *///?}
+    }
+
+    //? if <1.21.1 {
+    /*//? if neoforge {
+    /^@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    ^///? }
+    *///? } else {
+    @Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    //? }
+    private File loadGetOptionsFile(Options options) {
+        return globalOptionsFile;
+    }
+
+    @Redirect(method = "save", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    private File saveGetOptionsFile(Options instance) {
+        return globalOptionsFile;
+    }
+
+    // not used in Options class grrrrr but just in #case
+    @Inject(method = "getFile", at = @At("HEAD"), cancellable = true)
+    private void getFile(CallbackInfoReturnable<File> cir) {
+        cir.setReturnValue(globalOptionsFile);
+        cir.cancel();
+    }
+
+    // Dont datafix, preserves non existant options from newer versions
+    @Inject(method = "dataFix", at = @At("HEAD"), cancellable = true)
+    private void dataFix(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
+    }
+
+    // make backported options loaded/stored
+    @Inject(method = "processOptions", at = @At("TAIL"))
+    private void processOptions(Options.FieldAccess fieldAccess, CallbackInfo ci) {
+        //? if <=1.18.2 {
+        /*directionalAudio = fieldAccess.process("directionalAudio", directionalAudio);
+        darknessEffectScale = fieldAccess.process("darknessEffectScale", darknessEffectScale);
+        *///?}
+        //? if <=1.19.2 {
+        /*narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);
+         *///?}
+        //? if <=1.21.1 {
+        /*musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
+        musicToast = fieldAccess.process("musicToast", musicToast);
+        *///?}
+        //? if <=26.1.2 {
+        /*preferredGraphicsBackend = fieldAccess.process("preferredGraphicsBackend", preferredGraphicsBackend);
+        keyFriends = fieldAccess.process("keyFriends", keyFriends);
+        sharePresence = fieldAccess.process("sharePresence", sharePresence);
+        inGameNotification = fieldAccess.process("inGameNotification", inGameNotification);
+        *///?}
+
+        try {
+            ResourcePackUtil.loadResourcePacks();
+        }catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // dont modify the resourcepack list from the file, creates new list of actually applied packs
+    //? if >=1.20.1 {
+    @Inject(method = "updateResourcePacks", at = @At("HEAD"), cancellable = true)
+    private void updateResourcePacks(PackRepository packRepository, CallbackInfo ci) {
+        ResourcePackUtil.updateResourcePacks(packRepository, (Options)(Object)this, this.minecraft);
+        ci.cancel();
+    }
+    //?}
+
+    // have it apply packs from the proper list, instead of file list
+    @ModifyVariable(method = "loadSelectedResourcePacks", at = @At("STORE"))
+    private Iterator<String> loadPacksIterator(Iterator<String> iterator) {
+        return ResourcePackUtil.appliedResourcePacks.iterator();
+    }
 }
