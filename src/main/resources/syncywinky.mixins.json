@@ -1,7 +1,9 @@
 {
   "required": true,
+  "minVersion": "0.7",
   "package": "z3roco01.syncywinky.mixin",
   "compatibilityLevel": "${java}",
+  "refmap": "syncywinky.refmap.json",
   "client": [
     "OptionsMixin",
     "OptionsScreenMixin"

@@ -96,7 +96,7 @@ dependencies {
 tasks.named<Jar>("jar") {
     manifest {
         attributes(
-            "MixinConfigs" to "syncywinky.mixins.json"
+            "MixinConfigs" to "syncywinky.mixins.json",
         )
     }
 }
