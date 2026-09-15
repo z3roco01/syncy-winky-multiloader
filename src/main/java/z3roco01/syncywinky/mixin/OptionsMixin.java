@@ -56,13 +56,13 @@ public abstract class OptionsMixin {
     private static boolean narratorHotkey;
     *///?}
     //? if <=1.21.1 {
-    /*@Unique
+    @Unique
     private static String musicFrequency;
     @Unique
     private static String musicToast;
-    *///?}
+    //?}
     //? if <=26.1.2 {
-    /*@Unique
+    @Unique
     private static String preferredGraphicsBackend;
     @Unique
     private static String keyFriends;
@@ -70,7 +70,7 @@ public abstract class OptionsMixin {
     private static String sharePresence;
     @Unique
     private static boolean inGameNotification;
-    *///?}
+    //?}
 
     @Unique
     private static PackRepository packRepository = null;
@@ -105,35 +105,36 @@ public abstract class OptionsMixin {
         /*narratorHotkey = true;
          *///?}
         //? if <=1.21.1 {
-        /*musicFrequency = "DEFAULT";
+        musicFrequency = "DEFAULT";
         musicToast = "never";
-        *///?}
+        //?}
         //? if <=26.1.2 {
-        /*preferredGraphicsBackend = "default";
+        preferredGraphicsBackend = "default";
         keyFriends = "key.keyboard.o";
         sharePresence = "all";
         inGameNotification = false;
-        *///?}
+        //?}
     }
 
     //? if (neoforge || fabric ){
-    @Inject(method = "<init>", at = @At("HEAD"))
+    /*@Inject(method = "<init>", at = @At("HEAD"))
     private static void init(Minecraft minecraft, File workingDirectory, CallbackInfo ci) {
         init();
     }
-    //?}
+    *///?}
 
+    //? if forge {
     @Inject(method = "load()V", at = @At("HEAD"))
     private void load(CallbackInfo ci) {
         init();
     }
+    //?}
 
-
-    //? if <=1.21.1 && (neoforge || forge) {
-    /*@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    *///? } else {
-    @Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    //? }
+    //? if <=1.21.1 && (neoforge || forge) && > 1.18.2 {
+    @Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    //? } else {
+    /*@Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    *///? }
     private File loadGetOptionsFile(Options options) {
         return globalOptionsFile;
     }
@@ -166,15 +167,15 @@ public abstract class OptionsMixin {
         /*narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);
          *///?}
         //? if <=1.21.1 {
-        /*musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
+        musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
         musicToast = fieldAccess.process("musicToast", musicToast);
-        *///?}
+        //?}
         //? if <=26.1.2 {
-        /*preferredGraphicsBackend = fieldAccess.process("preferredGraphicsBackend", preferredGraphicsBackend);
+        preferredGraphicsBackend = fieldAccess.process("preferredGraphicsBackend", preferredGraphicsBackend);
         keyFriends = fieldAccess.process("keyFriends", keyFriends);
         sharePresence = fieldAccess.process("sharePresence", sharePresence);
         inGameNotification = fieldAccess.process("inGameNotification", inGameNotification);
-        *///?}
+        //?}
 
         try {
             ResourcePackUtil.loadResourcePacks();

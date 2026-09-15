@@ -1,7 +1,7 @@
 package z3roco01.syncywinky.loader;
 
 //? if fabric {
-import net.fabricmc.api.ClientModInitializer;
+/*import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 
 public class SyncyWinkyFabric implements ClientModInitializer {
@@ -10,4 +10,4 @@ public class SyncyWinkyFabric implements ClientModInitializer {
         SyncyWinkyCommon.init();
     }
 }
-//?}
+*///?}
