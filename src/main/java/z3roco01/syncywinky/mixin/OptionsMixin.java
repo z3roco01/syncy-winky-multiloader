@@ -110,10 +110,8 @@ public abstract class OptionsMixin {
         *///?}
     }
 
-    //? if <1.21.1 {
-    /*//? if neoforge {
-    /^@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    ^///? }
+    //? if <=1.21.1 && (neoforge || forge) {
+    /*@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
     *///? } else {
     @Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
     //? }
@@ -143,7 +141,7 @@ public abstract class OptionsMixin {
     private void processOptions(Options.FieldAccess fieldAccess, CallbackInfo ci) {
         //? if <=1.18.2 {
         /*directionalAudio = fieldAccess.process("directionalAudio", directionalAudio);
-        darknessEffectScale = fieldAccess.process("darknessEffectScale", darknessEffectScale);
+        darknessEffectScale = fieldAccess.process("darknessEffectScale", (float)darknessEffectScale);
         *///?}
         //? if <=1.19.2 {
         /*narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);

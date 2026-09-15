@@ -1,8 +1,8 @@
 package z3roco01.syncywinky.mixin;
 import net.minecraft.client.Options;
 //?if <=1.19.2{
-/*import net.minecraft.client.gui.screens.OptionsScreen;*/
-//?}
+/*import net.minecraft.client.gui.screens.OptionsScreen;
+*///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.PackRepository;

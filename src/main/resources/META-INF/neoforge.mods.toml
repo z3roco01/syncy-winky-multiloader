@@ -11,6 +11,7 @@ authors = "z3roco01"
 description = "Syncs your game settings across all instacnes !"
 
 logoFile = "assets/syncywinky/icon.png"
+iconFile = "assets/syncywinky/icon.png"
 #displayURL = "..."
 #issueTrackerUrl = "..."
 
