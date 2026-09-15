@@ -84,7 +84,7 @@ tasks {
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
 
-        exclude("fabric.mod.json", "*.ct", "*.classtweaker")
+        exclude("fabric.mod.json", "*.ct", "*.classtweaker", "mods.toml", "pack.mcmeta")
     }
 
     named("createMinecraftArtifacts") {

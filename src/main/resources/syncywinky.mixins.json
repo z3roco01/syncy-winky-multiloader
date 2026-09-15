@@ -3,7 +3,8 @@
   "package": "z3roco01.syncywinky.mixin",
   "compatibilityLevel": "${java}",
   "client": [
-    "OptionsMixin"
+    "OptionsMixin",
+    "OptionsScreenMixin"
   ],
   "mixins": [
   ],

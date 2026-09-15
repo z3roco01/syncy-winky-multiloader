@@ -2,11 +2,11 @@ license = "GPL-v3"
 
 modLoader="javafml"
 loaderVersion="[1,)"
-clientSideOnly = true
+clientSideOnly=true
 
 [[mods]]
-modId = "${id}"
-displayName = "${name}"
+modId = "syncywinky"
+displayName = "Syncy Winky"
 version = "${version}"
 authors = "z3roco01"
 description = "Syncs your game settings across all instacnes !"
@@ -19,9 +19,9 @@ iconFile = "assets/syncywinky/icon.png"
 [[mixins]]
 config = "syncywinky.mixins.json"
 
-[[dependencies.${id}]]
+[[dependencies.syncywinky]]
 modId = "minecraft"
-type = "required"
+mandatory = true
 versionRange = "${minecraft}"
 ordering = "NONE"
 side = "CLIENT"

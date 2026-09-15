@@ -15,7 +15,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "z3roco01.syncywinky.SyncyWinkyFabric"
+      "z3roco01.syncywinky.loader.SyncyWinkyFabric"
     ]
   },
   "mixins": [

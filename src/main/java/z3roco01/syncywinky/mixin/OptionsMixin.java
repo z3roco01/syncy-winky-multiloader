@@ -1,15 +1,11 @@
 package z3roco01.syncywinky.mixin;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 //? if >=1.19.2 {
 //?}
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
-import org.apache.commons.compress.utils.Lists;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import z3roco01.syncywinky.ResourcePackUtil;
-import z3roco01.syncywinky.SyncyWinkyCommon;
+import z3roco01.syncywinky.loader.SyncyWinkyCommon;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,13 +56,13 @@ public abstract class OptionsMixin {
     private static boolean narratorHotkey;
     *///?}
     //? if <=1.21.1 {
-    /*@Unique
+    @Unique
     private static String musicFrequency;
     @Unique
     private static String musicToast;
-    *///?}
+    //?}
     //? if <=26.1.2 {
-    /*@Unique
+    @Unique
     private static String preferredGraphicsBackend;
     @Unique
     private static String keyFriends;
@@ -74,13 +70,23 @@ public abstract class OptionsMixin {
     private static String sharePresence;
     @Unique
     private static boolean inGameNotification;
-    *///?}
+    //?}
 
     @Unique
     private static PackRepository packRepository = null;
 
-    @Inject(method = "<init>", at = @At("HEAD"))
-    private static void init(Minecraft minecraft, File workingDirectory, CallbackInfo ci) {
+    @Unique
+    private static boolean hasInited = false;
+
+    @Unique
+    private static void init() {
+        // only run once hmm
+        if(hasInited)
+            return;
+
+        hasInited = true;
+
+        SyncyWinkyCommon.LOGGER.info("hiiii");
         globalOptionsFile = new File(System.getProperty("user.home") + "/.config/syncy-winky/options.txt");
         // just need to create global config directory if it does not exist
         if(!globalOptionsFile.getParentFile().exists()) {
@@ -99,22 +105,35 @@ public abstract class OptionsMixin {
         /*narratorHotkey = true;
          *///?}
         //? if <=1.21.1 {
-        /*musicFrequency = "DEFAULT";
+        musicFrequency = "DEFAULT";
         musicToast = "never";
-        *///?}
+        //?}
         //? if <=26.1.2 {
-        /*preferredGraphicsBackend = "default";
+        preferredGraphicsBackend = "default";
         keyFriends = "key.keyboard.o";
         sharePresence = "all";
         inGameNotification = false;
-        *///?}
+        //?}
     }
 
+    //? if (neoforge || fabric ){
+    /*@Inject(method = "<init>", at = @At("HEAD"))
+    private static void init(Minecraft minecraft, File workingDirectory, CallbackInfo ci) {
+        init();
+    }
+    *///?}
+
+    @Inject(method = "load()V", at = @At("HEAD"))
+    private void load(CallbackInfo ci) {
+        init();
+    }
+
+
     //? if <=1.21.1 && (neoforge || forge) {
-    /*@Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    *///? } else {
-    @Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
-    //? }
+    @Redirect(method = "load(Z)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    //? } else {
+    /*@Redirect(method = "load", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;optionsFile:Ljava/io/File;", opcode = Opcodes.GETFIELD))
+    *///? }
     private File loadGetOptionsFile(Options options) {
         return globalOptionsFile;
     }
@@ -147,15 +166,15 @@ public abstract class OptionsMixin {
         /*narratorHotkey = fieldAccess.process("narratorHotkey", narratorHotkey);
          *///?}
         //? if <=1.21.1 {
-        /*musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
+        musicFrequency = fieldAccess.process("musicFrequency", musicFrequency);
         musicToast = fieldAccess.process("musicToast", musicToast);
-        *///?}
+        //?}
         //? if <=26.1.2 {
-        /*preferredGraphicsBackend = fieldAccess.process("preferredGraphicsBackend", preferredGraphicsBackend);
+        preferredGraphicsBackend = fieldAccess.process("preferredGraphicsBackend", preferredGraphicsBackend);
         keyFriends = fieldAccess.process("keyFriends", keyFriends);
         sharePresence = fieldAccess.process("sharePresence", sharePresence);
         inGameNotification = fieldAccess.process("inGameNotification", inGameNotification);
-        *///?}
+        //?}
 
         try {
             ResourcePackUtil.loadResourcePacks();

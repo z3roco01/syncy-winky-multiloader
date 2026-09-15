@@ -1,17 +1,16 @@
 plugins {
     id("net.neoforged.moddev.legacyforge") version "2.0.147"
-    id("dev.kikugie.postprocess.jsonlang") version "2.1-beta.8"
 }
 
-val minecraft = stonecutter.current.version
-val mcVersion = stonecutter.current.project.substringBeforeLast('-')
+val minecraft = sc.current.version
+val mcVersion = sc.current.project.substringBeforeLast('-')
 
 tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
 
     val props = HashMap<String, String>().apply {
-        this["version"] = prop("mod.version") + "+" + prop("deps.minecraft")
-        this["minecraft"] = prop("deps.minecraft")
+        this["version"] = prop("mod.version") + "+" + mcVersion
+        this["minecraft"] = mcVersion
     }
 
     filesMatching(listOf("neoforge.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml")) {
@@ -19,14 +18,8 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-version = "${property("mod.version")}+${property("deps.minecraft")}-forge"
+version = "${property("mod.version")}+${mcVersion}-forge"
 base.archivesName = "${property("mod.id") as String}-forge"
-
-jsonlang {
-    languageDirectories = listOf("assets/${property("mod.id")}/lang")
-    prettyPrint = true
-}
-
 
 repositories {
     mavenLocal()
@@ -75,10 +68,10 @@ legacyForge {
 
 
 dependencies {
-    modCompileOnly("io.github.llamalad7:mixinextras-common:0.5.0")
-    implementation("io.github.llamalad7:mixinextras-forge:0.5.0")
-    jarJar("io.github.llamalad7:mixinextras-forge:0.5.0")
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    modCompileOnly("io.github.llamalad7:mixinextras-common:0.5.5")
+    implementation("io.github.llamalad7:mixinextras-forge:0.5.5")
+    jarJar("io.github.llamalad7:mixinextras-forge:0.5.5")
+    annotationProcessor("org.spongepowered:mixin:0.8.7:processor")
     // Mixin Constraints - embedded
     implementation("com.moulberry:mixinconstraints:1.0.9")
     jarJar("com.moulberry:mixinconstraints:1.0.9")
@@ -87,8 +80,8 @@ dependencies {
 
 
 mixin {
-    add(sourceSets["main"], "immersiveoverlays.refmap.json")
-    config("immersiveoverlays.mixins.json")
+    add(sourceSets["main"], "syncywinky.refmap.json")
+    config("syncywinky.mixins.json")
 }
 
 dependencies {
@@ -97,7 +90,7 @@ dependencies {
 tasks.named<Jar>("jar") {
     manifest {
         attributes(
-            "MixinConfigs" to "immersiveoverlays.mixins.json"
+            "MixinConfigs" to "syncywinky.mixins.json"
         )
     }
 }
@@ -117,9 +110,37 @@ stonecutter {
     }
 }
 
+val requiredJava = when {
+    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
+    sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
+    else -> JavaVersion.VERSION_1_8
+}
+
 tasks {
     processResources {
         exclude("**/fabric.mod.json", "**/*.accesswidener", "**/neoforge.mods.toml")
+
+        val mixinJava = "JAVA_${requiredJava.majorVersion}"
+        filesMatching("*.mixins.json") { expand("java" to mixinJava) }
+
+        fun MutableMap<String, String>.register(key: String, property: String) {
+            val value: String = sc.properties[property]
+            inputs.property(key, value)
+            set(key, value)
+        }
+
+        val props = buildMap {
+            register("id", "mod.id")
+            register("name", "mod.name")
+            register("version", "mod.version")
+            register("minecraft", "mod.mc_compat")
+        }
+
+        filesMatching("META-INF/mods.toml") { expand(props) }
+
+        exclude("fabric.mod.json", "*.ct", "*.classtweaker", "META-INF/neoforge.mods.toml")
     }
 
     named("createMinecraftArtifacts") {
@@ -137,20 +158,6 @@ tasks {
 
 java {
     withSourcesJar()
-    val javaCompat = when {
-    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
-    sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
-    sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
-    sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
-    else -> JavaVersion.VERSION_1_8
+    sourceCompatibility = requiredJava
+    targetCompatibility = requiredJava
 }
-    sourceCompatibility = javaCompat
-    targetCompatibility = javaCompat
-}
-
-val additionalVersionsStr = findProperty("publish.additionalVersions") as String?
-val additionalVersions: List<String> = additionalVersionsStr
-    ?.split(",")
-    ?.map { it.trim() }
-    ?.filter { it.isNotEmpty() }
-    ?: emptyList()
