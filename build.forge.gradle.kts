@@ -18,7 +18,7 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-version = "${property("mod.version")}+${mcVersion}-forge"
+version = "${property("mod.version")}+${mcVersion}"
 base.archivesName = "${property("mod.id") as String}-forge"
 
 repositories {
