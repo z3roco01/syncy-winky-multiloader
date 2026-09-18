@@ -19,6 +19,9 @@ iconFile = "assets/syncywinky/icon.png"
 [[mixins]]
 config = "syncywinky.mixins.json"
 
+[[accessTransformers]]
+file="META-INF/accesstransformer.neoforge.cfg"
+
 [[dependencies.${id}]]
 modId = "minecraft"
 type = "required"

@@ -121,7 +121,7 @@ val requiredJava = when {
 tasks {
     processResources {
         dependsOn("createMinecraftArtifacts")
-        exclude("**/fabric.mod.json", "**/*.accesswidener", "**/neoforge.mods.toml")
+        exclude("**/fabric.mod.json", "**/*.accesswidener", "**/neoforge.mods.toml", "accesstransformer.neoforge.cfg")
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }

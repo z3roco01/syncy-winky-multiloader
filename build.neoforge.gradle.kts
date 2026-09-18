@@ -51,6 +51,8 @@ neoForge {
             server()
         }
     }
+
+    accessTransformers.from("../../src/main/resources/META-INF/accesstransformer.neoforge.cfg")
 }
 
 java {
