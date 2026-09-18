@@ -2,11 +2,15 @@ package z3roco01.syncywinky.mixin;
 
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
+import com.google.gson.JsonElement;
 import com.mojang.blaze3d.platform.VideoMode;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
+//? if >=1.19.2 {
 import net.minecraft.client.OptionInstance;
+//? }
 import net.minecraft.client.Options;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -29,6 +33,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
 
 @Mixin(Options.class)
 public abstract class OptionsMixin {
@@ -91,6 +97,14 @@ public abstract class OptionsMixin {
             }
             SyncyWinkyCommon.LOGGER.info("Created directory for config with path: " + globalOptionsFile.getParentFile().toString());
         }
+        try {
+            if(!globalOptionsFile.exists()) {
+                globalOptionsFile.createNewFile();
+                SyncyWinkyCommon.LOGGER.info("Created File: " + globalOptionsFile.getPath());
+            }
+        }catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //? if (neoforge || fabric ){
@@ -116,10 +130,6 @@ public abstract class OptionsMixin {
         }catch(IOException e) {
             throw new RuntimeException(e);
         }
-
-        for(Map.Entry<String, String> entry : optionsMap.entrySet()) {
-            SyncyWinkyCommon.LOGGER.info(entry.getKey() + " : " + entry.getValue());
-        }
     }
 
     //? if <=1.21.1 && (neoforge || forge) && > 1.18.2 {
@@ -139,11 +149,33 @@ public abstract class OptionsMixin {
     @Inject(method = "save", at = @At("HEAD"), cancellable = true)
     private void save(CallbackInfo ci) {
         processOptions(new Options.FieldAccess() {
+            //? if >=1.21.1 {
             public <T> void process(final String name, final OptionInstance<T> option) {
-                option.codec().encodeStart(JsonOps.INSTANCE, option.get()).ifError((error) -> SyncyWinkyCommon.LOGGER.error("Error saving option {}: {}", option, error.message())).ifSuccess((element) -> {
+                option.codec().encodeStart(JsonOps.INSTANCE, option.get()).ifError((error)->SyncyWinkyCommon.LOGGER.error("Error saving option {}: {}", option, error.message())).ifSuccess((element)->{
                     optionsMap.put(name, Options.GSON.toJson(element));
                 });
             }
+            //? } elif >=1.19.2 {
+            /*public <T> void process(final String name, final OptionInstance<T> option) {
+                DataResult<JsonElement> dataResult = option.codec().encodeStart(JsonOps.INSTANCE, option.get());
+                dataResult.error().ifPresent((partialResult) -> SyncyWinkyCommon.LOGGER.error("Error saving option " + option + ": " + partialResult));
+                dataResult.result().ifPresent((jsonElement) -> {
+                    optionsMap.put(name, Options.GSON.toJson(jsonElement));
+                });
+            }
+            *///? }
+
+            //? if <=1.18.2 {
+            /*public <T> T process(String name, T value, IntFunction<T> intFunction, ToIntFunction<T> toIntFunction) {
+                optionsMap.put(name, String.valueOf(toIntFunction.applyAsInt(value)));
+                return value;
+            }
+
+            public double process(String name, double value) {
+                optionsMap.put(name, String.valueOf(value));
+                return value;
+            }
+            *///? }
 
             public int process(final String name, final int value) {
                 optionsMap.put(name, String.valueOf(value));
@@ -185,17 +217,21 @@ public abstract class OptionsMixin {
         try(final PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(globalOptionsFile), StandardCharsets.UTF_8))) {
             //? if >=26.1 {
             writer.println("version:" + SharedConstants.getCurrentVersion().dataVersion().version());
-            //? } else {
+            //? } elif >=1.20.1 {
             /*writer.println("version:" + SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+            *///? } else {
+            /*writer.println("version:" + SharedConstants.getCurrentVersion().getWorldVersion());
             *///? }
             for(Map.Entry<String, String> entry : optionsMap.entrySet()) {
                 writer.print(entry.getKey() + ":" + entry.getValue());
+                writer.println();
             }
         }catch(IOException e) {
-            throw new RuntimeException(e);
+            SyncyWinkyCommon.LOGGER.error("Failed to save options ", e);
         }
 
         this.broadcastOptions();
+        ci.cancel();
     }
 
     // not used in Options class grrrrr but just in #case

@@ -2,7 +2,7 @@
 mod.id = "syncywinky"
 mod.name = "Syncy Winky"
 mod.group = "z3roco01.syncywinky"
-mod.version = "1.3.0"
+mod.version = "2.0.0"
 
 deps.fabric_loader = "0.19.3"
 loomx.loom_version = "1.17-SNAPSHOT"
