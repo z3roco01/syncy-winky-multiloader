@@ -41,11 +41,7 @@ legacyForge {
     version = property("deps.forge") as String
     validateAccessTransformers = true
     if(sc.current.parsed < "1.20") {
-        // why is it all different places..... ;(
-        if(sc.current.parsed > "1.18.2")
-            setAccessTransformers(file("build/resources/main/META-INF/accesstransformer.cfg"))
-        else
-            setAccessTransformers(file("build/generated/stonecutter/main/resources/META-INF/accesstransformer.cfg"))
+        setAccessTransformers(file("../../src/main/resources/META-INF/accesstransformer.cfg"))
     }
 
     if (hasProperty("deps.parchment")) parchment {
